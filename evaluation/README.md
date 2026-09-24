@@ -83,3 +83,51 @@ rather than silently changing the denominator.
 
 See ../docs/evaluation.md for the full evaluation protocol and
 ../docs/threat-model.md for handling boundaries.
+
+## Additional tools
+
+### validate_policy.py
+
+Display and validate the current risk policy configuration:
+
+```powershell
+python evaluation/validate_policy.py
+```
+
+Shows:
+- Signal weights and their point contributions at each strength level
+- Policy thresholds (SUSPICIOUS and HIGH_RISK)
+- Strength multipliers (strong, moderate, weak)
+- Routing policy configuration
+- Example calculations for common threat combinations
+- Policy validation (checks for consistency issues)
+
+Useful for:
+- Understanding how signals contribute to risk states
+- Validating custom policy modifications
+- Explaining routing decisions in reports
+
+### analyze_misclassifications.py
+
+Analyze false positives and false negatives from predictions:
+
+```powershell
+python evaluation/analyze_misclassifications.py --input path/to/predictions.jsonl
+```
+
+Produces:
+- False positive count with examples
+- False negative count with examples
+- Confusion matrix showing all label transitions
+
+Save to JSON:
+
+```powershell
+python evaluation/analyze_misclassifications.py --input predictions.jsonl --output analysis.json
+```
+
+Useful for:
+- Identifying systematic failure modes
+- Finding patterns in misclassifications
+- Iterating on policy adjustments
+- Understanding which signals are under/over-weighted

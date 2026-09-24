@@ -8,6 +8,26 @@ It is deliberately **not** an antivirus, EDR, firewall, malware sandbox,
 automatic-remediation tool, or cloud chatbot. The working core is local and
 does not need an API key, cloud LLM, or online reputation lookup.
 
+## Recent enhancements
+
+**Stage 0 threat detection now includes:**
+
+- Refund and lottery scam patterns (combined claim + action request)
+- Account verification/reactivation attempts
+- File and attachment upload requests
+- Enhanced manipulation patterns ("trust me", "don't filter", preemptive reassurance)
+- Expanded urgency detection (expires, expiring, within X days, don't wait, hurry)
+- Additional identity impersonation patterns (revenue, customs authorities)
+- Support for cryptocurrency payment requests
+- Additional URL shorteners and brand protection (Telegram, Discord, Steam, GitHub, Slack)
+
+**Documentation and evaluation:**
+
+- New [CLI Reference](docs/cli-reference.md) with complete usage examples and JSON output reference
+- New [Evaluation Guide](docs/evaluation-guide.md) with label mapping, dataset preparation, metrics validation, and reporting checklist
+- Example evaluation dataset showing end-to-end workflow
+- 27 comprehensive tests including new threat patterns
+
 ## What works today
 
 **IMPLEMENTED**
@@ -16,7 +36,8 @@ does not need an API key, cloud LLM, or online reputation lookup.
   assessment, template explanation, and recommended actions.
 - Stage 0 deterministic screening for OTP, credential and payment requests,
   urgency, account threats, authority claims, suspicious instructions, obvious
-  prompt-manipulation attempts, and offline URL structure hints.
+  prompt-manipulation attempts, refund/lottery scams, account verification attempts,
+  file upload requests, and offline URL structure hints.
 - An append-only Evidence Ledger that retains source, extractor, qualitative
   strength, details, and text span where available.
 - A centralized, configurable, deterministic Risk Engine with `LOW_RISK`,
@@ -25,6 +46,7 @@ does not need an API key, cloud LLM, or online reputation lookup.
 - A CPU status that is shown truthfully in results.
 - Tests and a standard-library evaluation utility without a shipped dataset or
   fabricated results.
+- Comprehensive evaluation framework with metrics, routing rates, latency tracking, and backend reporting.
 
 **PROTOTYPE / INTERFACES ONLY**
 
@@ -99,6 +121,9 @@ The terminal view is intentionally ordered as **Risk → Why → Evidence → Wh
 to do → System status**. It always displays the actual `AI acceleration` value;
 the current build reports `CPU`, never `NPU`.
 
+For complete CLI reference, usage examples, and JSON output details, see
+[docs/cli-reference.md](docs/cli-reference.md).
+
 ## Test
 
 `pytest` is the only optional development dependency. It is available in the
@@ -158,8 +183,8 @@ or fabricated result files.
 python evaluation/metrics.py --input path/to/predictions.jsonl --positive-label SCAM
 ```
 
-See [evaluation/README.md](evaluation/README.md) and
-[docs/evaluation.md](docs/evaluation.md) for schema and measurement rules.
+See [evaluation/README.md](evaluation/README.md), [Evaluation Guide](docs/evaluation-guide.md),
+and [docs/evaluation.md](docs/evaluation.md) for schema, measurement rules, and best practices.
 
 ## Important limitations
 

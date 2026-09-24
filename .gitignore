@@ -1,0 +1,37 @@
+# Python build and test artefacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+pytest-cache-files-*/
+.aegis-test-tmp/
+.coverage
+coverage.xml
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local environments and editor state
+.venv/
+venv/
+.env
+.env.*
+.vscode/
+.idea/
+
+# Local model/data caches and unsafe samples
+models/cache/
+models/*.onnx
+models/*.bin
+models/*.pt
+models/*.pth
+data/
+datasets/
+*.exe
+*.dll
+*.msi
+
+# OS files
+.DS_Store
+Thumbs.db

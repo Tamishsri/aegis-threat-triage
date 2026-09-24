@@ -1,0 +1,3 @@
+MZ
+This deliberately inert test fixture represents untrusted submitted content.
+It must be read as bytes for static header inspection and must never be run.

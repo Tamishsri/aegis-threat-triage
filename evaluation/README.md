@@ -131,3 +131,130 @@ Useful for:
 - Finding patterns in misclassifications
 - Iterating on policy adjustments
 - Understanding which signals are under/over-weighted
+
+### threat_report.py
+
+Generate threat distribution and performance summaries from predictions:
+
+```powershell
+python -c "from evaluation.threat_report import generate_threat_report, print_threat_report; from pathlib import Path; report = generate_threat_report(Path('predictions.jsonl')); print_threat_report(report)"
+```
+
+Or via Python API:
+
+```python
+from pathlib import Path
+from evaluation.threat_report import generate_threat_report, print_threat_report
+
+report = generate_threat_report(Path("predictions.jsonl"))
+print_threat_report(report)
+```
+
+Produces:
+- Risk state distribution (HIGH_RISK, SUSPICIOUS, LOW_RISK, INSUFFICIENT_EVIDENCE counts)
+- Routing statistics (Stage 0 resolution rate, Stage 1 invocation rate)
+- Backend distribution (CPU vs NPU execution)
+- Latency summary (mean, min, max milliseconds)
+
+Visual output includes:
+- ASCII histograms for risk distribution
+- Percentage breakdowns
+- Latency statistics with sample count
+
+Useful for:
+- Overview of threat prevalence in dataset
+- Routing policy effectiveness
+- Performance optimization targets
+- Cross-run comparison
+
+### collect_evidence.py
+
+Analyze messages with full signal evidence for correlation analysis:
+
+```python
+from pathlib import Path
+from evaluation.collect_evidence import collect_predictions_with_evidence
+
+collect_predictions_with_evidence(
+    Path("messages.txt"),
+    Path("evidence.jsonl"),
+    label="SCAM"  # optional ground truth
+)
+```
+
+Generates predictions with detailed evidence:
+
+```json
+{
+  "predicted": "HIGH_RISK",
+  "stage_0_resolved": true,
+  "backend": "CPU",
+  "evidence": [
+    {"signal": "otp_request", "strength": "strong", "source": "screening", "details": "OTP verification", "span": 5}
+  ],
+  "expected": "SCAM"
+}
+```
+
+Useful for:
+- Signal correlation analysis
+- Evidence transparency
+- Finding co-occurring threat signals
+- Policy debugging
+
+### signal_analysis.py
+
+Analyze signal correlations and identify common threat patterns:
+
+```python
+from pathlib import Path
+from evaluation.signal_analysis import analyze_signal_correlations, print_signal_analysis
+
+analysis = analyze_signal_correlations(Path("evidence.jsonl"))
+print_signal_analysis(analysis)
+```
+
+Produces:
+- Signal frequency (how often each threat type appears)
+- Most common signal combinations (e.g., "otp_request + urgency")
+- Threat patterns by risk state
+- Signal correlation matrix (which signals appear together)
+- Strongest signal correlations (ranked by frequency)
+
+Output example:
+```
+SIGNAL FREQUENCY (Top 10)
+   1. account_verification              42 ( 28.0%)
+   2. otp_request                       35 ( 23.3%)
+   
+STRONGEST SIGNAL CORRELATIONS
+  otp_request              ↔ urgency               (18x together)
+  credential_request       ↔ otp_request          (12x together)
+```
+
+Useful for:
+- Understanding threat composition
+- Identifying signal interactions
+- Validating policy weights
+- Finding underdetected combinations
+- Comparing threat patterns across risk states
+
+### quick_reference.py
+
+Display quick command reference for 8 common evaluation workflows.
+
+```powershell
+python evaluation/quick_reference.py
+```
+
+Shows templates for:
+1. Single message analysis
+2. Batch analysis from file
+3. JSON format output
+4. Stdin pipeline
+5. Evaluation metrics
+6. Error analysis
+7. Policy configuration
+8. Interactive mode
+
+Useful as a quick reminder of common commands and workflows.

@@ -1,0 +1,5 @@
+{"id":"example-001","expected":"SCAM","predicted":"HIGH_RISK","stage_0_resolved":true,"stage_1_invoked":false,"end_to_end_ms":8.3,"backend":"CPU"}
+{"id":"example-002","expected":"SCAM","predicted":"SUSPICIOUS","stage_0_resolved":false,"stage_1_invoked":false,"end_to_end_ms":6.1,"backend":"CPU"}
+{"id":"example-003","expected":"BENIGN","predicted":"LOW_RISK","stage_0_resolved":true,"stage_1_invoked":false,"end_to_end_ms":5.2,"backend":"CPU"}
+{"id":"example-004","expected":"SCAM","predicted":"HIGH_RISK","stage_0_resolved":true,"stage_1_invoked":false,"end_to_end_ms":7.8,"backend":"CPU"}
+{"id":"example-005","expected":"BENIGN","predicted":"INSUFFICIENT_EVIDENCE","stage_0_resolved":false,"stage_1_invoked":false,"end_to_end_ms":3.9,"backend":"CPU"}

@@ -70,7 +70,19 @@ class AnalysisResult:
 
 
 class TextTriagePipeline:
-    """The first working AEGIS pipeline, intentionally CPU-first and offline."""
+    """The first working AEGIS pipeline, intentionally CPU-first and offline.
+
+    This pipeline routes untrusted text through:
+    1. Stage 0: deterministic screening for high-confidence threat indicators
+    2. Stage 1: optional semantic analysis (unavailable by default)
+    3. Evidence ledger: provenance-preserving record of all observations
+    4. Risk engine: centralized, transparent assessment policy
+    5. Templated explanation and recommended actions
+
+    The result preserves enough detail for evaluation and user review.
+    An empty Stage 0 result is not treated as safe; it triggers a routing flag
+    for semantic analysis and yields INSUFFICIENT_EVIDENCE if Stage 1 is unavailable.
+    """
 
     def __init__(
         self,

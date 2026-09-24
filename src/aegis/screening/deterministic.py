@@ -11,10 +11,10 @@ from aegis.evidence.models import Evidence, EvidenceSource, EvidenceStrength
 from aegis.screening.models import ScreeningReason, ScreeningResult
 from aegis.screening.urls import inspect_urls
 
-REQUEST_VERBS = r"(?:send|share|provide|give|reply(?:\s+with)?|enter|confirm|verify|forward|tell(?:\s+me)?)"
+REQUEST_VERBS = r"(?:send|share|provide|give|reply(?:\s+with)?|enter|confirm|verify|forward|tell(?:\s+me)?|submit|upload|attach)"
 OTP_TERMS = r"(?:otp|one[ -]?time(?:\s+(?:password|passcode|code))?|verification\s+code|security\s+code|authentication\s+code)"
-CREDENTIAL_TERMS = r"(?:password|passcode|username|login\s+details|credentials?)"
-PAYMENT_TERMS = r"(?:payment|pay(?:ment)?|transfer|wire(?:\s+transfer)?|upi|gift\s+card|card\s+number|bank\s+account)"
+CREDENTIAL_TERMS = r"(?:password|passcode|username|login\s+details|credentials?|ssn|social\s+security)"
+PAYMENT_TERMS = r"(?:payment|pay(?:ment)?|transfer|wire(?:\s+transfer)?|upi|gift\s+card|card\s+number|bank\s+account|bitcoin|crypto)"
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,6 +89,12 @@ RULES: tuple[_SignalRule, ...] = (
         _compile(r"\b(?:disable\s+(?:security|antivirus|defender|virus\s+protection)|install\s+(?:this|the)\s+(?:app|application)|download\s+(?:and\s+)?(?:run|open|execute)|enable\s+(?:macros?|unknown\s+sources?|remote\s+access))\b"),
         EvidenceStrength.STRONG,
         "An instruction that could reduce security controls or run untrusted content was detected.",
+    ),
+    _SignalRule(
+        "attachment_request",
+        _compile(r"\b(?:upload|attach|send)\b.{0,60}?\b(?:attachment|file|document|screenshot|photo|image|receipt|invoice|proof)"),
+        EvidenceStrength.MODERATE,
+        "A request to upload or send an attachment or file was detected.",
     ),
 )
 

@@ -15,6 +15,7 @@ SIGNAL_LABELS = {
     "prize_lottery_scam": "unsolicited prize or lottery claim",
     "manipulation_attempt": "a manipulation attempt",
     "suspicious_instruction": "a suspicious instruction",
+    "attachment_request": "a file/attachment upload request",
     "url_embedded_credentials": "a URL with embedded credentials",
     "url_ip_host": "a URL using an IP-address host",
     "url_punycode": "an IDN/punycode URL",

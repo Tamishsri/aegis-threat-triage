@@ -120,3 +120,15 @@ def test_expanded_urgency_patterns() -> None:
         result = DeterministicTextScreener().screen(text)
         signals = {item.signal for item in result.evidence}
         assert "urgency" in signals, f"Failed to detect urgency in: {text}"
+
+
+def test_attachment_request_detection() -> None:
+    result = DeterministicTextScreener().screen(
+        "Please upload your receipt and photo ID to verify your account."
+    )
+
+    signals = {item.signal for item in result.evidence}
+    assert "attachment_request" in signals
+    attachment_evidence = [item for item in result.evidence if item.signal == "attachment_request"]
+    assert len(attachment_evidence) >= 1
+    assert attachment_evidence[0].strength is EvidenceStrength.MODERATE

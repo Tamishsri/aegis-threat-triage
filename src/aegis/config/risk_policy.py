@@ -26,6 +26,7 @@ class RiskPolicy:
             "prize_lottery_scam": 5,
             "manipulation_attempt": 5,
             "suspicious_instruction": 4,
+            "attachment_request": 2,
             "url_embedded_credentials": 4,
             "url_ip_host": 3,
             "url_punycode": 3,

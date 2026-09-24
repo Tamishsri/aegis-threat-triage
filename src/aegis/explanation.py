@@ -11,6 +11,8 @@ SIGNAL_LABELS = {
     "otp_request": "an OTP request",
     "credential_request": "a credential request",
     "payment_request": "a payment request",
+    "refund_scam": "refund/compensation claim combined with action request",
+    "prize_lottery_scam": "unsolicited prize or lottery claim",
     "manipulation_attempt": "a manipulation attempt",
     "suspicious_instruction": "a suspicious instruction",
     "url_embedded_credentials": "a URL with embedded credentials",
@@ -21,6 +23,7 @@ SIGNAL_LABELS = {
     "unusual_subdomain": "an unusual subdomain structure",
     "suspicious_url_path": "a security-themed URL path",
     "account_threat": "account-threat language",
+    "account_verification": "an account verification/reactivation request",
     "identity_impersonation": "an identity/authority claim",
     "urgency": "urgency language",
 }

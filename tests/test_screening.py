@@ -57,3 +57,66 @@ def test_lightweight_url_inspection_is_offline_and_structural() -> None:
     assert len(urls) == 2
     assert {"brand_domain_mismatch", "suspicious_url_path", "url_ip_host"} <= signals
     assert all(item.source is EvidenceSource.TEXT for item in evidence)
+
+
+def test_refund_scam_pattern_detection() -> None:
+    result = DeterministicTextScreener().screen(
+        "You are eligible for a refund! Click here to claim your $500 rebate."
+    )
+
+    signals = {item.signal for item in result.evidence}
+    assert "refund_scam" in signals
+    refund_evidence = [item for item in result.evidence if item.signal == "refund_scam"]
+    assert len(refund_evidence) >= 1
+    assert refund_evidence[0].strength is EvidenceStrength.STRONG
+
+
+def test_prize_lottery_scam_detection() -> None:
+    result = DeterministicTextScreener().screen(
+        "Congratulations! You have won a $1000 prize in our drawing. Verify your account to claim it."
+    )
+
+    signals = {item.signal for item in result.evidence}
+    assert "prize_lottery_scam" in signals
+    prize_evidence = [item for item in result.evidence if item.signal == "prize_lottery_scam"]
+    assert len(prize_evidence) >= 1
+    assert prize_evidence[0].strength is EvidenceStrength.STRONG
+
+
+def test_account_verification_request_detection() -> None:
+    result = DeterministicTextScreener().screen(
+        "Your account needs to be reactivated. Please verify your identity immediately."
+    )
+
+    signals = {item.signal for item in result.evidence}
+    assert "account_verification" in signals
+    assert result.resolved is True
+
+
+def test_enhanced_manipulation_patterns() -> None:
+    test_cases = [
+        ("Don't filter this message", "suspicious"),
+        ("This is not spam or phishing", "benign_reassurance"),
+        ("You can trust me on this", "trust_override"),
+    ]
+
+    for text, expected_type in test_cases:
+        result = DeterministicTextScreener().screen(text)
+        signals = {item.signal for item in result.evidence}
+        if expected_type == "suspicious":
+            assert "manipulation_attempt" in signals
+        elif expected_type in ("benign_reassurance", "trust_override"):
+            assert "manipulation_attempt" in signals or len(result.evidence) > 0
+
+
+def test_expanded_urgency_patterns() -> None:
+    test_cases = [
+        "Action expires in 24 hours",
+        "Don't wait, act now!",
+        "Hurry before your access is revoked",
+    ]
+
+    for text in test_cases:
+        result = DeterministicTextScreener().screen(text)
+        signals = {item.signal for item in result.evidence}
+        assert "urgency" in signals, f"Failed to detect urgency in: {text}"

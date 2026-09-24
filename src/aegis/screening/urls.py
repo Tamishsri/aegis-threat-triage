@@ -13,7 +13,11 @@ URL_PATTERN = re.compile(r"(?i)\b(?:https?://|www\.)[^\s<>\"']+")
 TRAILING_URL_PUNCTUATION = ".,!?;:)]}>\"'"
 
 SHORTENER_HOSTS = frozenset(
-    {"bit.ly", "tinyurl.com", "t.co", "is.gd", "buff.ly", "rb.gy", "cutt.ly"}
+    {
+        "bit.ly", "bitly.com", "tinyurl.com", "t.co", "is.gd", "buff.ly",
+        "rb.gy", "cutt.ly", "short.link", "ow.ly", "j.mp", "goo.gl",
+        "bl.ink", "bitlink.com", "url.shortener", "tidy.url", "clicky.me"
+    }
 )
 KNOWN_BRANDS = {
     "paypal": "paypal.com",
@@ -25,6 +29,14 @@ KNOWN_BRANDS = {
     "facebook": "facebook.com",
     "instagram": "instagram.com",
     "whatsapp": "whatsapp.com",
+    "telegram": "telegram.org",
+    "discord": "discord.com",
+    "steam": "steampowered.com",
+    "ebay": "ebay.com",
+    "reddit": "reddit.com",
+    "twitter": "twitter.com",
+    "github": "github.com",
+    "slack": "slack.com",
 }
 SUSPICIOUS_PATH_TOKENS = re.compile(
     r"(?i)\b(?:login|verify|secure|account|update|password|otp|payment|confirm)\b"

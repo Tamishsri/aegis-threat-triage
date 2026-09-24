@@ -16,7 +16,9 @@ SHORTENER_HOSTS = frozenset(
     {
         "bit.ly", "bitly.com", "tinyurl.com", "t.co", "is.gd", "buff.ly",
         "rb.gy", "cutt.ly", "short.link", "ow.ly", "j.mp", "goo.gl",
-        "bl.ink", "bitlink.com", "url.shortener", "tidy.url", "clicky.me"
+        "bl.ink", "bitlink.com", "url.shortener", "tidy.url", "clicky.me",
+        "adf.ly", "short.am", "gg.gg", "v.gd", "tiny.cc", "link.ax",
+        "shorte.st", "shorten.ws", "urlstats.com", "shortened.link"
     }
 )
 KNOWN_BRANDS = {
@@ -39,7 +41,7 @@ KNOWN_BRANDS = {
     "slack": "slack.com",
 }
 SUSPICIOUS_PATH_TOKENS = re.compile(
-    r"(?i)\b(?:login|verify|secure|account|update|password|otp|payment|confirm)\b"
+    r"(?i)\b(?:login|verify|secure|account|update|password|otp|payment|confirm|authenticate|reactivate|validate|resubmit)\b"
 )
 
 
@@ -66,9 +68,14 @@ def inspect_urls(text: str, *, source: EvidenceSource = EvidenceSource.TEXT) -> 
 
     HTTPS absence is deliberately not a signal. These checks are structural
     hints, not reputation lookups or proof that a domain is malicious.
+    
+    URL deduplication: the same canonical URL is only flagged once, even if
+    it appears multiple times in the text.
     """
 
     evidence: list[Evidence] = []
+    seen_canonical_hosts: set[str] = set()
+    
     for extracted in extract_urls(text):
         raw_url = extracted.value
         normalized_url = raw_url if "://" in raw_url else f"https://{raw_url}"
@@ -76,6 +83,11 @@ def inspect_urls(text: str, *, source: EvidenceSource = EvidenceSource.TEXT) -> 
         host = (parsed.hostname or "").casefold().rstrip(".")
         if not host:
             continue
+
+        # Skip if we've already analyzed this canonical host
+        if host in seen_canonical_hosts:
+            continue
+        seen_canonical_hosts.add(host)
 
         details_prefix = f"URL structure observed: {raw_url}"
         if parsed.username is not None:

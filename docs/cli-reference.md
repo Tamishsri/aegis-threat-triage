@@ -163,6 +163,36 @@ Output:
 }
 ```
 
+### Batch file analysis
+
+Analyze multiple messages from a file (one per line):
+
+```powershell
+python -m aegis text --file messages.txt
+```
+
+To save predictions as JSONL for evaluation:
+
+```powershell
+python -m aegis text --file messages.txt --output predictions.jsonl --label SCAM
+```
+
+Each output line is a JSON object:
+
+```json
+{"predicted": "HIGH_RISK", "stage_0_resolved": true, "stage_1_invoked": false, "backend": "CPU", "expected": "SCAM"}
+{"predicted": "INSUFFICIENT_EVIDENCE", "stage_0_resolved": false, "stage_1_invoked": false, "backend": "CPU", "expected": "SCAM"}
+```
+
+Fields:
+- `predicted` - AEGIS state (HIGH_RISK, SUSPICIOUS, LOW_RISK, INSUFFICIENT_EVIDENCE)
+- `stage_0_resolved` - whether deterministic screening resolved
+- `stage_1_invoked` - whether semantic analysis ran (rare by default)
+- `backend` - actual backend used (CPU, never mislabeled)
+- `expected` - (with `--label`) ground-truth label for evaluation
+
+This JSONL format feeds directly into `evaluation/metrics.py` for batch evaluation.
+
 ### Reading from stdin
 
 Pipe text directly:
@@ -280,9 +310,19 @@ aegis --version
 
 ## Examples
 
-### Batch processing
+### Batch processing (simple)
 
-Analyze multiple messages from a file:
+Process a file of messages directly (recommended):
+
+```powershell
+python -m aegis text --file messages.txt --output predictions.jsonl --label SCAM
+```
+
+This creates one JSONL line per message with predictions ready for `metrics.py`.
+
+### Batch processing (programmatic)
+
+For more control, iterate with PowerShell:
 
 ```powershell
 $messages = Get-Content messages.txt
@@ -292,23 +332,12 @@ foreach ($msg in $messages) {
 }
 ```
 
-### Collecting predictions for evaluation
+### Collecting predictions for evaluation (legacy)
 
-Generate a JSONL evaluation file:
+If you prefer manual collection:
 
 ```powershell
-$predictions = @()
-foreach ($message in $messages) {
-  $result = python -m aegis text $message --json | ConvertFrom-Json
-  $predictions += @{
-    "expected" = "SCAM"  # your ground truth
-    "predicted" = $result.risk.state
-    "stage_0_resolved" = $result.routing.stage_0_resolved
-    "stage_1_invoked" = $result.routing.stage_1_invoked
-    "backend" = $result.system.ai_acceleration
-  }
-}
-$predictions | ForEach-Object { $_ | ConvertTo-Json -Compress } | Set-Content predictions.jsonl
+python -m aegis text --file messages.txt --output predictions.jsonl --label SCAM
 ```
 
 Then evaluate:
@@ -316,6 +345,8 @@ Then evaluate:
 ```powershell
 python evaluation/metrics.py --input predictions.jsonl --positive-label HIGH_RISK
 ```
+
+Or build predictions manually from `--json` output and feed to metrics.
 
 ## Help and troubleshooting
 
